@@ -2,14 +2,17 @@ import sys
 import socket
 import time
 import urllib.parse
+import select
 
-def setupConn():
+def clientConn():
 	s = socket.socket()
 	host = socket.gethostname()
 	port = 4000
 	s.bind((host, port))
 	s.listen(5)
-	conn, address = s.accept()
+	return s
+	
+def sendInts(conn):
 	a = 0
 	while 1:
 		try:
@@ -24,11 +27,28 @@ def setupConn():
 		except ConnectionResetError:
 			print('client dced')
 			sys.exit(1)
-	
-setupConn()
+			
+def getClientPackets(conn, buffer):
+	while 1:
+		ready = select.select([conn], [], [], 5)
+		if ready[0]:
+			d = conn.recv(4096)
+			print(d)
+		
+		
 
-
 	
+
+buffer = bytearray()	
+	
+	
+s = clientConn()
+
+conn, address = s.accept()
+
+#sendInts(conn)
+
+getClientPackets(conn, buffer)
 
 	
 	
