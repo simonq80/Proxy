@@ -28,13 +28,27 @@ def sendInts(conn):
 			print('client dced')
 			sys.exit(1)
 			
-def getClientPackets(conn, buffer):
+def passTo(conn, buffer):
 	while 1:
-		ready = select.select([conn], [], [], 5)
-		if ready[0]:
+		try:
+			#ready = select.select([conn], [], [])
+			#if ready[0]:
 			d = conn.recv(4096)
-			print(d)
-		
+			
+			data = d.split()
+			try:
+				url = data[1]
+				temp = url.decode().split(':', 1)
+				sHost = temp[0]
+				sPort = temp[1]
+				print(sHost)
+				print(sPort)
+			except IndexError:
+				a = 1
+			conn.send(d)
+		except KeyboardInterrupt:
+			print('user exit')
+			sys.exit(1)
 		
 
 	
@@ -48,8 +62,8 @@ conn, address = s.accept()
 
 #sendInts(conn)
 
-getClientPackets(conn, buffer)
-
+passTo(conn, buffer)
+conn.close()
 	
 	
 
